@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Send, RefreshCw, Edit2, Bot } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Send, RefreshCw, Edit2, Bot, Trash2 } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -9,7 +9,8 @@ interface Message {
   status: 'sent' | 'error' | 'editing';
 }
 
-const STORAGE_KEY = 'chat_history';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+const STORAGE_KEY = import.meta.env.VITE_HISTORY;
 const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const chatAreaRef = useRef<HTMLDivElement>(null);
 
   // Load messages from localStorage on initial render
   useEffect(() => {
@@ -25,6 +27,9 @@ function App() {
       if (savedMessages) {
         const parsedMessages = JSON.parse(savedMessages);
         if (Array.isArray(parsedMessages) && parsedMessages.every(isValidMessage)) {
+          if (chatAreaRef.current) {
+            chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+          }
           setMessages(parsedMessages);
         } else {
           console.error('Invalid message format in localStorage');
@@ -53,6 +58,13 @@ function App() {
       }
     } catch (error) {
       console.error('Error saving messages to localStorage:', error);
+    }
+  }, [messages]);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -89,7 +101,7 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://iotchat-server.onrender.com/ask', {
+      const response = await fetch(`${API_BASE_URL}/ask`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,11 +170,16 @@ function App() {
     setEditingMessageId(null);
   };
 
+  const handleClearMessages = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setMessages([]);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800">
       {/* App Bar */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg p-6">
-        <div className="max-w-4xl mx-auto">
+      <div className="sticky top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 z-10">
+        <div className="max-w-4xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Bot className="w-8 h-8 text-blue-200" />
             <div>
@@ -170,20 +187,27 @@ function App() {
               <p className="text-blue-200 text-sm">Ask me anything related to the IoT course</p>
             </div>
           </div>
+          <button
+            onClick={handleClearMessages}
+            className="p-2 rounded-full text-white hover:text-red-300 transition-colors"
+            title="Clear Messages"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-4 max-w-4xl w-full mx-auto">
+      <div ref={chatAreaRef} className="flex-1 overflow-y-auto p-4 pb-[85px] max-w-4xl w-full mx-auto">
         <div className="space-y-4">
           {messages.map((message) => (
             <div
-              key={message.id}
+              key={message.id}        
               className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
             >
               <div className="group relative">
                 <div
-                  className={`max-w-[70vw] sm:max-w-md p-4 rounded-2xl ${
+                  className={`max-w-[70vw] sm:max-w-lg p-4 rounded-2xl ${
                     message.isUser
                       ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
                       : 'bg-gradient-to-r from-blue-100 to-white text-blue-900'
@@ -230,7 +254,7 @@ function App() {
       </div>
 
       {/* Input Area */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-gray-900 to-gray-800 p-4">
         <div className="max-w-4xl mx-auto">
           <form onSubmit={editingMessageId ? handleEditSubmit : handleSubmit} className="flex gap-2">
             <input
