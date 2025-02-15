@@ -178,7 +178,7 @@ function App() {
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800">
       {/* App Bar */}
-      <div className="sticky top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 z-10">
+      <div className="fixed top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 pb-20 z-10">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Bot className="w-8 h-8 text-blue-200" />
