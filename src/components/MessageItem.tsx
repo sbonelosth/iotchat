@@ -18,13 +18,13 @@ export function MessageItem({ message, isLatest, onRetry, onEdit, onLike, onDisl
   const [copied, setCopied] = useState(false);
 
   const handleLike = () => {
-    setToastMessage("I'm glad you like my response");
+    setToastMessage("I'm glad you like my response.");
     setShowToast(true);
     onLike?.(message);
   };
 
   const handleDislike = () => {
-    setToastMessage("I'm sorry. Refresh your query to get a better response");
+    setToastMessage("I'm sorry. Refresh your query to get a better response.");
     setShowToast(true);
     onDislike?.(message);
   };

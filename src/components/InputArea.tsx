@@ -1,4 +1,4 @@
-import React, { useState, useRef, ChangeEvent } from 'react';
+import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Send, Paperclip, X } from 'lucide-react';
 import { ContextType, FileAttachment } from '../types';
 
@@ -74,6 +74,10 @@ export function InputArea({
       fileInputRef.current.value = '';
     }
   };
+
+  useEffect(() => {
+    setSelectedContext(localStorage.getItem('selectedContext') as ContextType || 'MAIN');
+  }, []);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent p-4">
