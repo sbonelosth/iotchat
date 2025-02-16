@@ -24,7 +24,7 @@ export function MessageItem({ message, isLatest, onRetry, onEdit, onLike, onDisl
   };
 
   const handleDislike = () => {
-    setToastMessage("I'm sorry you don't like my response. Refresh your query and try again");
+    setToastMessage("I'm sorry. Refresh your query to get a better response");
     setShowToast(true);
     onDislike?.(message);
   };

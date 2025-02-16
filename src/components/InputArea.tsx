@@ -37,6 +37,11 @@ export function InputArea({
     }
   };
 
+  const handleContextChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSelectedContext(e.target.value as ContextType);
+    localStorage.setItem('selectedContext', e.target.value);
+  };
+
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setError('');
@@ -122,7 +127,7 @@ export function InputArea({
                     name="context"
                     value={context}
                     checked={selectedContext === context}
-                    onChange={(e) => setSelectedContext(e.target.value as ContextType)}
+                    onChange={handleContextChange}
                     className="absolute opacity-0 w-0 h-0"
                   />
                   <span
