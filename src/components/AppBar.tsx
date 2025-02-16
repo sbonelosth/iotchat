@@ -25,7 +25,7 @@ export function AppBar({ onClearMessages }: AppBarProps) {
   }, [chatContext]);
 
   return (
-    <div className="sticky top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 z-10">
+    <div className="sticky top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 z-10 env(safe-area-inset-top)">
       <div className="max-w-4xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Bot className="w-8 h-8 text-blue-200" />

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MessageItem } from './MessageItem';
 import { Message } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 interface MessageListProps {
   messages: Message[];
@@ -10,6 +11,9 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, onRetry, onEdit, isLoading }: MessageListProps) {
+  const { viewportHeight } = useAuth();
+  const chatAreaRef = useRef<HTMLDivElement>(null);
+  
   const handleLike = (message: Message) => {
     message.feedback = message.feedback === 'like' ? undefined : 'like';
   };
@@ -21,8 +25,14 @@ export function MessageList({ messages, onRetry, onEdit, isLoading }: MessageLis
   const nonUserMessages = messages.filter(m => !m.isUser);
   const latestAiMessage = nonUserMessages[nonUserMessages.length - 1];
 
+  useEffect(() => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  }, [viewportHeight, messages]);
+
   return (
-    <div className="space-y-4">
+    <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 118px - 64px)` }} className="flex flex-col gap-2 p-4 overflow-y-auto">
       {messages.map((message) => (
         <MessageItem
           key={message.id}

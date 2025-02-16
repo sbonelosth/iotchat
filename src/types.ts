@@ -23,4 +23,6 @@ export interface FileAttachment {
 export interface AuthContextType {
   chatContext: ChatContextType;
   setChatContext: (context: ChatContextType) => void;
+  viewportHeight: number;
+  setViewportHeight: (height: number) => void;
 }

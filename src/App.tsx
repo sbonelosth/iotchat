@@ -14,9 +14,7 @@ function App() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const chatAreaRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
+  
   // Load messages from localStorage on initial render
   useEffect(() => {
     try {
@@ -54,57 +52,6 @@ function App() {
       console.error('Error saving messages to localStorage:', error);
     }
   }, [messages]);
-
-  // Auto-scroll to bottom when messages change
-  useEffect(() => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  // Handle viewport changes
-  useEffect(() => {
-    const handleResize = () => {
-      // Adjust viewport height for mobile
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleResize);
-    };
-  }, []);
-
-  // Handle keyboard open/close on mobile
-  useEffect(() => {
-    const handleFocus = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-
-    const handleBlur = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-
-    const inputElement = inputRef.current;
-    if (inputElement) {
-      inputElement.addEventListener('focus', handleFocus);
-      inputElement.addEventListener('blur', handleBlur);
-    }
-
-    return () => {
-      if (inputElement) {
-        inputElement.removeEventListener('focus', handleFocus);
-        inputElement.removeEventListener('blur', handleBlur);
-      }
-    };
-  }, []);
 
   const isValidMessage = (message: any): message is Message => {
     return (
@@ -242,10 +189,10 @@ function App() {
 
   return (
     <AuthProvider>
-      <div className="flex flex-col h-[calc(var(--vh,1vh)*100)] bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800">
+      <div className={`flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800`}>
         <AppBar onClearMessages={handleClearMessages} />
 
-        <div ref={chatAreaRef} className="flex-1 overflow-y-auto p-4 pb-[120px] max-w-4xl w-full mx-auto">
+        <div className="flex-1 overflow-y-auto max-w-4xl w-full mx-auto">
           <MessageList
             messages={messages}
             onRetry={handleRetry}
@@ -260,7 +207,6 @@ function App() {
           editingMessageId={editingMessageId}
           onSubmit={handleSubmit}
           onInputChange={(e) => setInput(e.target.value)}
-          inputRef={inputRef}
         />
       </div>
     </AuthProvider>
