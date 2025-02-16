@@ -213,81 +213,16 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800">
-      {/* App Bar */}
-      <div className="sticky top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 z-10">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Bot className="w-8 h-8 text-blue-200" />
-            <div>
-              <h1 className="text-lg sm:text-2xl font-bold text-white">Information Systems Chat</h1>
-              <p className="text-blue-200 text-sm">Ask me anything related to the IoT course</p>
-            </div>
-          </div>
-          <button
-            onClick={handleClearMessages}
-            className="p-2 rounded-full text-white hover:text-red-300 transition-colors"
-            title="Clear Messages"
-          >
-            <Trash2 className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Chat Area */}
-      <div ref={chatAreaRef} className="flex-1 overflow-y-auto p-4 pb-[85px] max-w-4xl w-full mx-auto">
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}        
-              className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className="group relative">
-                <div
-                  className={`max-w-[70vw] sm:max-w-lg p-4 rounded-2xl ${
-                    message.isUser
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
-                      : 'bg-gradient-to-r from-blue-100 to-white text-blue-900'
-                  } shadow-md`}
-                >
-                  <p className="text-md md:text-base" dangerouslySetInnerHTML={{ __html: message.text }} />
-                  {/*<div className="text-xs opacity-60 mt-1">
-                    {new Date(message.timestamp).toLocaleTimeString()}
-                  </div>*/}
-                </div>
-                {message.isUser && (
-                  <div className="absolute top-0 right-full pr-2 hidden group-hover:flex items-center gap-1">
-                    <button
-                      onClick={() => handleRetry(message)}
-                      className="p-2 rounded-full bg-blue-800 text-white hover:bg-blue-700 transition-colors"
-                      title="Retry"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleEdit(message)}
-                      className="p-2 rounded-full bg-blue-800 text-white hover:bg-blue-700 transition-colors"
-                      title="Edit"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-gradient-to-r from-blue-100 to-white p-4 rounded-2xl shadow-md">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-.3s]" />
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-.5s]" />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+    <div className="flex flex-col h-[calc(var(--vh,1vh)*100)] bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800">
+      <AppBar onClearMessages={handleClearMessages} />
+      
+      <div ref={chatAreaRef} className="flex-1 overflow-y-auto p-4 pb-[120px] max-w-4xl w-full mx-auto">
+        <MessageList
+          messages={messages}
+          onRetry={handleRetry}
+          onEdit={handleEdit}
+          isLoading={isLoading}
+        />
       </div>
 
       <InputArea
