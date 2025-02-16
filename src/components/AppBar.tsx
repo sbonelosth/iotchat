@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ContextType } from '../types';
 import { Bot, Trash2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AppBarProps {
   onClearMessages: () => void;
 }
 
 export function AppBar({ onClearMessages }: AppBarProps) {
-  const [selectedContext, setSelectedContext] = useState<ContextType>('MAIN');
+  const { chatContext } = useAuth();
   const [contextLabel, setContextLabel] = useState<string>('Answering IoT course');
 
   useEffect(() => {
-    const storedContext = localStorage.getItem('selectedContext');
-    if (storedContext) {
-      setSelectedContext(storedContext as ContextType);
-    }
-  }, []);
-
-  useEffect(() => {
-    switch (selectedContext) {
+    switch (chatContext) {
       case 'MAIN':
         setContextLabel('General IoT chat');
         break;
@@ -29,7 +22,7 @@ export function AppBar({ onClearMessages }: AppBarProps) {
         setContextLabel(`Ask about your IoT enrollment`);
         break;
     }
-  }, [selectedContext]);
+  }, [chatContext]);
 
   return (
     <div className="sticky top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 z-10">
@@ -37,7 +30,7 @@ export function AppBar({ onClearMessages }: AppBarProps) {
         <div className="flex items-center gap-3">
           <Bot className="w-8 h-8 text-blue-200" />
           <div>
-            <h1 className="text-lg sm:text-2xl font-bold text-white">AI Chat: BICIOT Level 3</h1>
+            <h1 className="text-lg sm:text-xl font-bold text-white">AI Chat - BICIOT Lvl 3</h1>
             <p className="text-blue-200 text-sm">{contextLabel}</p>
           </div>
         </div>

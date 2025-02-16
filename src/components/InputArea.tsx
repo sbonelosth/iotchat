@@ -1,13 +1,15 @@
 import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Send, Paperclip, X } from 'lucide-react';
-import { ContextType, FileAttachment } from '../types';
+import { ChatContextType, FileAttachment } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 interface InputAreaProps {
   input: string;
   isLoading: boolean;
   editingMessageId: string | null;
-  onSubmit: (e: React.FormEvent, context: ContextType, attachment: FileAttachment | null) => void;
+  onSubmit: (e: React.FormEvent, context: ChatContextType, attachment: FileAttachment | null) => void;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
@@ -22,15 +24,16 @@ export function InputArea({
   editingMessageId,
   onSubmit,
   onInputChange,
+  inputRef
 }: InputAreaProps) {
-  const [selectedContext, setSelectedContext] = useState<ContextType>('MAIN');
+  const { chatContext, setChatContext } = useAuth();
   const [attachment, setAttachment] = useState<FileAttachment | null>(null);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(e, selectedContext, attachment);
+    onSubmit(e, chatContext, attachment);
     setAttachment(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -38,7 +41,7 @@ export function InputArea({
   };
 
   const handleContextChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedContext(e.target.value as ContextType);
+    setChatContext(e.target.value as ChatContextType);
     localStorage.setItem('selectedContext', e.target.value);
   };
 
@@ -76,7 +79,7 @@ export function InputArea({
   };
 
   useEffect(() => {
-    setSelectedContext(localStorage.getItem('selectedContext') as ContextType || 'MAIN');
+    setChatContext(localStorage.getItem('selectedContext') as ChatContextType || 'MAIN');
   }, []);
 
   return (
@@ -109,6 +112,7 @@ export function InputArea({
               onChange={onInputChange}
               placeholder={editingMessageId ? "Edit your message..." : "Type your message..."}
               className="flex-1 bg-blue-950 text-white placeholder-blue-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              ref={inputRef}
             />
             <button
               type="submit"
@@ -130,7 +134,7 @@ export function InputArea({
                     type="radio"
                     name="context"
                     value={context}
-                    checked={selectedContext === context}
+                    checked={chatContext === context}
                     onChange={handleContextChange}
                     className="absolute opacity-0 w-0 h-0"
                   />
@@ -138,7 +142,7 @@ export function InputArea({
                     className={`
                       inline-block px-4 py-1 rounded-lg text-xs font-bold
                       transition-all duration-200 cursor-pointer
-                      ${selectedContext === context
+                      ${chatContext === context
                         ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg scale-105'
                         : 'bg-white text-gray-700 hover:bg-gray-100'
                       }

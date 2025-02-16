@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AppBar } from './components/AppBar';
 import { MessageList } from './components/MessageList';
 import { InputArea } from './components/InputArea';
-import { Message, ContextType, FileAttachment } from './types';
+import { Message, ChatContextType, FileAttachment } from './types';
+import { AuthProvider } from './contexts/AuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 const STORAGE_KEY = import.meta.env.VITE_HISTORY;
@@ -14,6 +15,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const chatAreaRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Load messages from localStorage on initial render
   useEffect(() => {
@@ -78,6 +80,32 @@ function App() {
     };
   }, []);
 
+  // Handle keyboard open/close on mobile
+  useEffect(() => {
+    const handleFocus = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    const handleBlur = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      inputElement.addEventListener('focus', handleFocus);
+      inputElement.addEventListener('blur', handleBlur);
+    }
+
+    return () => {
+      if (inputElement) {
+        inputElement.removeEventListener('focus', handleFocus);
+        inputElement.removeEventListener('blur', handleBlur);
+      }
+    };
+  }, []);
+
   const isValidMessage = (message: any): message is Message => {
     return (
       typeof message === 'object' &&
@@ -95,7 +123,7 @@ function App() {
 
   const sendMessage = async (
     text: string,
-    context: ContextType,
+    context: ChatContextType,
     attachment: FileAttachment | null,
     messageId?: string
   ) => {
@@ -115,7 +143,7 @@ function App() {
     if (!messageId) {
       setMessages(prev => [...prev, userMessage]);
     }
-    
+
     setInput('');
     setIsLoading(true);
 
@@ -124,7 +152,7 @@ function App() {
       formData.append('question', text);
       formData.append('context', context);
       formData.append('history', JSON.stringify(messages));
-      
+
       if (attachment) {
         formData.append('attachment', attachment.file);
       }
@@ -133,12 +161,12 @@ function App() {
         method: 'POST',
         body: formData,
       });
-      
+
       const data = await response.json();
       const formattedText = data.response
         .replace(/(\*\*[^*]+\*\*)/g, (match: string) => `<b>${match.slice(2, -2)}</b>`)
         .replace(/\n/g, '<br />');
-      
+
       const aiMessage: Message = {
         id: generateMessageId(),
         text: formattedText || 'Sorry, I could not process your request.',
@@ -146,7 +174,7 @@ function App() {
         timestamp: Date.now(),
         status: 'sent',
       };
-      
+
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       const errorMessage: Message = {
@@ -164,12 +192,12 @@ function App() {
 
   const handleSubmit = async (
     e: React.FormEvent,
-    context: ContextType,
+    context: ChatContextType,
     attachment: FileAttachment | null
   ) => {
     e.preventDefault();
     if (!input.trim()) return;
-    
+
     if (editingMessageId) {
       await handleEditSubmit(e, context, attachment);
     } else {
@@ -192,7 +220,7 @@ function App() {
 
   const handleEditSubmit = async (
     e: React.FormEvent,
-    context: ContextType,
+    context: ChatContextType,
     attachment: FileAttachment | null
   ) => {
     e.preventDefault();
@@ -213,26 +241,29 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(var(--vh,1vh)*100)] bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800">
-      <AppBar onClearMessages={handleClearMessages} />
-      
-      <div ref={chatAreaRef} className="flex-1 overflow-y-auto p-4 pb-[120px] max-w-4xl w-full mx-auto">
-        <MessageList
-          messages={messages}
-          onRetry={handleRetry}
-          onEdit={handleEdit}
+    <AuthProvider>
+      <div className="flex flex-col h-[calc(var(--vh,1vh)*100)] bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800">
+        <AppBar onClearMessages={handleClearMessages} />
+
+        <div ref={chatAreaRef} className="flex-1 overflow-y-auto p-4 pb-[120px] max-w-4xl w-full mx-auto">
+          <MessageList
+            messages={messages}
+            onRetry={handleRetry}
+            onEdit={handleEdit}
+            isLoading={isLoading}
+          />
+        </div>
+
+        <InputArea
+          input={input}
           isLoading={isLoading}
+          editingMessageId={editingMessageId}
+          onSubmit={handleSubmit}
+          onInputChange={(e) => setInput(e.target.value)}
+          inputRef={inputRef}
         />
       </div>
-
-      <InputArea
-        input={input}
-        isLoading={isLoading}
-        editingMessageId={editingMessageId}
-        onSubmit={handleSubmit}
-        onInputChange={(e) => setInput(e.target.value)}
-      />
-    </div>
+    </AuthProvider>
   );
 }
 
