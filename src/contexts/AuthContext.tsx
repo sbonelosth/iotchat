@@ -1,25 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AuthContextType, ChatContextType } from '../types';
+import { AuthContextType, User } from '../types';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [chatContext, setChatContext] = useState<ChatContextType>('MAIN');
+  const [user, setUser] = useState<User | null>(null);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
-
-  useEffect(() => {
-    const storedContext = localStorage.getItem('selectedContext');
-    if (storedContext) {
-      setChatContext(storedContext as ChatContextType);
-    }
-  }, []);
 
   useEffect(() => {
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
     };
 
-    console.log('Viewport height:', viewportHeight);
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
 
@@ -30,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ chatContext, setChatContext, viewportHeight, setViewportHeight }}>
+    <AuthContext.Provider value={{ user, setUser, viewportHeight, setViewportHeight }}>
       {children}
     </AuthContext.Provider>
   );

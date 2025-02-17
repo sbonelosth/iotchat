@@ -1,13 +1,13 @@
 import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Send, Paperclip, X } from 'lucide-react';
-import { ChatContextType, FileAttachment } from '../types';
-import { useAuth } from '../contexts/AuthContext';
+import { ChatScopeType, FileAttachment } from '../types';
+import { useChat } from '../contexts/ChatContext';
 
 interface InputAreaProps {
   input: string;
-  isLoading: boolean;
+  isResponseLoading: boolean;
   editingMessageId: string | null;
-  onSubmit: (e: React.FormEvent, context: ChatContextType, attachment: FileAttachment | null) => void;
+  onSubmit: (e: React.FormEvent, context: ChatScopeType, attachment: FileAttachment | null) => void;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -19,19 +19,19 @@ const ALLOWED_FILE_TYPES = [
 
 export function InputArea({
   input,
-  isLoading,
+  isResponseLoading,
   editingMessageId,
   onSubmit,
   onInputChange,
 }: InputAreaProps) {
-  const { chatContext, setChatContext } = useAuth();
+  const { chatScope, setChatScope } = useChat();
   const [attachment, setAttachment] = useState<FileAttachment | null>(null);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(e, chatContext, attachment);
+    onSubmit(e, chatScope, attachment);
     setAttachment(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -39,7 +39,7 @@ export function InputArea({
   };
 
   const handleContextChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setChatContext(e.target.value as ChatContextType);
+    setChatScope(e.target.value as ChatScopeType);
     localStorage.setItem('selectedContext', e.target.value);
   };
 
@@ -77,7 +77,7 @@ export function InputArea({
   };
 
   useEffect(() => {
-    setChatContext(localStorage.getItem('selectedContext') as ChatContextType || 'MAIN');
+    setChatScope(localStorage.getItem('selectedContext') as ChatScopeType || 'MAIN');
   }, []);
 
   return (
@@ -113,7 +113,7 @@ export function InputArea({
             />
             <button
               type="submit"
-              disabled={isLoading || !input.trim()}
+              disabled={isResponseLoading || !input.trim()}
               className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="w-5 h-5" />
@@ -131,7 +131,7 @@ export function InputArea({
                     type="radio"
                     name="context"
                     value={context}
-                    checked={chatContext === context}
+                    checked={chatScope === context}
                     onChange={handleContextChange}
                     className="absolute opacity-0 w-0 h-0"
                   />
@@ -139,7 +139,7 @@ export function InputArea({
                     className={`
                       inline-block px-4 py-1 rounded-lg text-xs font-bold
                       transition-all duration-200 cursor-pointer
-                      ${chatContext === context
+                      ${chatScope === context
                         ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg scale-105'
                         : 'bg-white text-gray-700 hover:bg-gray-100'
                       }

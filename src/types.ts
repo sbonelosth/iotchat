@@ -1,3 +1,9 @@
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface Message {
   id: string;
   text: string;
@@ -11,7 +17,7 @@ export interface Message {
   };
 }
 
-export type ChatContextType = 'MAIN' | 'FAI/IS' | 'BICIOT';
+export type ChatScopeType = 'MAIN' | 'FAI/IS' | 'BICIOT';
 
 export interface FileAttachment {
   file: File;
@@ -21,8 +27,28 @@ export interface FileAttachment {
 }
 
 export interface AuthContextType {
-  chatContext: ChatContextType;
-  setChatContext: (context: ChatContextType) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
   viewportHeight: number;
   setViewportHeight: (height: number) => void;
 }
+
+export interface ChatContextType {
+  chatScope: ChatScopeType;
+  setChatScope: (scope: ChatScopeType) => void;
+  messages: Message[];
+  setMessages: (messages: Message[]) => void;
+  input: string;
+  setInput: (input: string) => void;
+  isResponseLoading: boolean;
+  setIsResponseLoading: (isLoading: boolean) => void;
+  editingMessageId: string | null;
+  setEditingMessageId: (messageId: string | null) => void;
+  sendQuestion: (text: string, chatScope: ChatScopeType, attachment: FileAttachment | null, messageId?: string) => void;
+  handleClearMessages: () => void;
+  handleRetry: (message: Message) => void;
+  handleEditQuestion: (message: Message) => void;
+  handleSendQuestion: (e: React.FormEvent, chatScope: ChatScopeType, attachment: FileAttachment | null) => void;
+  handleSendEdit: (e: React.FormEvent, chatScope: ChatScopeType, attachment: FileAttachment | null) => void;
+}
+

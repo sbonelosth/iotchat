@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Bot, Trash2 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useChat } from '../contexts/ChatContext';
 
 interface AppBarProps {
   onClearMessages: () => void;
 }
 
 export function AppBar({ onClearMessages }: AppBarProps) {
-  const { chatContext } = useAuth();
+  const { chatScope } = useChat();
   const [contextLabel, setContextLabel] = useState<string>('Answering IoT course');
 
   useEffect(() => {
-    switch (chatContext) {
+    switch (chatScope) {
       case 'MAIN':
         setContextLabel('General IoT chat');
         break;
@@ -22,7 +22,7 @@ export function AppBar({ onClearMessages }: AppBarProps) {
         setContextLabel(`Ask about your IoT enrollment`);
         break;
     }
-  }, [chatContext]);
+  }, [chatScope]);
 
   return (
     <div className="sticky top-0 bg-gradient-to-r from-blue-900 to-blue-800 shadow-lg px-6 py-2 z-10 env(safe-area-inset-top)">

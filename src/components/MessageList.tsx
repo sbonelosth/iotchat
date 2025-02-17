@@ -7,10 +7,10 @@ interface MessageListProps {
   messages: Message[];
   onRetry: (message: Message) => void;
   onEdit: (message: Message) => void;
-  isLoading: boolean;
+  isResponseLoading: boolean;
 }
 
-export function MessageList({ messages, onRetry, onEdit, isLoading }: MessageListProps) {
+export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: MessageListProps) {
   const { viewportHeight } = useAuth();
   const chatAreaRef = useRef<HTMLDivElement>(null);
   
@@ -44,7 +44,7 @@ export function MessageList({ messages, onRetry, onEdit, isLoading }: MessageLis
           onDislike={handleDislike}
         />
       ))}
-      {isLoading && (
+      {isResponseLoading && (
         <div className="flex justify-start">
           <div className="bg-gradient-to-r from-blue-100 to-white p-4 rounded-2xl shadow-md">
             <div className="flex gap-2">
