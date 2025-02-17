@@ -29,5 +29,18 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2"
-  }
+  },
+  "description": "",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sbonelosth/iotchat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sbonelosth/iotchat/issues"
+  },
+  "homepage": "https://github.com/sbonelosth/iotchat#readme"
 }
