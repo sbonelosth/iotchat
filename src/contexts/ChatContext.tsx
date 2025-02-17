@@ -105,7 +105,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             formData.append('question', text);
             formData.append('chat_scope', chatScope);
             formData.append('history', JSON.stringify(messages));
-            formData.append('current', new Date().toISOString());
+            formData.append('now', new Date().toDateString());
             
             if (attachment) {
                 formData.append('attachment', attachment.file);
