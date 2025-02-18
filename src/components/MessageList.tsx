@@ -32,7 +32,7 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
   }, [viewportHeight, messages]);
 
   return (
-    <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px)` }} className="flex flex-col gap-2 p-4 overflow-y-auto">
+    <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 118px - 64px)` }} className="flex flex-col gap-2 p-4 overflow-y-auto">
       {messages.map((message) => (
         <MessageItem
           key={message.id}
