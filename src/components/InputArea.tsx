@@ -2,6 +2,7 @@ import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Send, Paperclip, X } from 'lucide-react';
 import { ChatScopeType, FileAttachment } from '../types';
 import { useChat } from '../contexts/ChatContext';
+import { Suggestions } from './Suggestions';
 
 interface InputAreaProps {
   input: string;
@@ -24,7 +25,7 @@ export function InputArea({
   onSubmit,
   onInputChange,
 }: InputAreaProps) {
-  const { chatScope, setChatScope } = useChat();
+  const { chatScope, setChatScope, sendQuestion } = useChat();
   const [attachment, setAttachment] = useState<FileAttachment | null>(null);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -69,6 +70,10 @@ export function InputArea({
     });
   };
 
+  const handleSuggestionClick = (question: string) => {
+    sendQuestion(question, 'MAIN', null);
+  };
+
   const removeAttachment: () => void = () => {
     setAttachment(null);
     if (fileInputRef.current) {
@@ -83,6 +88,7 @@ export function InputArea({
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent p-2 pt-1">
       <div className="max-w-4xl mx-auto space-y-3">
+        <Suggestions onSuggestionClick={handleSuggestionClick} />
         {error && (
           <div className="text-red-400 text-sm bg-red-900/20 p-2 rounded-lg">
             {error}
@@ -108,7 +114,7 @@ export function InputArea({
               type="text"
               value={input}
               onChange={onInputChange}
-              placeholder={editingMessageId ? "Edit your message..." : "Type your message..."}
+              placeholder={editingMessageId ? "Edit your message" : "Message"}
               className="flex-1 bg-blue-950 text-white placeholder-blue-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button

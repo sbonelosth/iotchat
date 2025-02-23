@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bot, Trash2 } from 'lucide-react';
+import { Bot, RefreshCcwDot } from 'lucide-react';
 import { useChat } from '../contexts/ChatContext';
 
 interface AppBarProps {
@@ -13,7 +13,7 @@ export function AppBar({ onClearMessages }: AppBarProps) {
   useEffect(() => {
     switch (chatScope) {
       case 'MAIN':
-        setContextLabel('General IoT chat');
+        setContextLabel('General chat');
         break;
       case 'FAI/IS':
         setContextLabel('Ask about your faculty and department');
@@ -36,10 +36,10 @@ export function AppBar({ onClearMessages }: AppBarProps) {
         </div>
         <button
           onClick={onClearMessages}
-          className="p-2 rounded-full text-white hover:text-red-300 transition-colors"
+          className="p-2 rounded-full text-gray-300 hover:text-white-100 transition-colors"
           title="Clear Messages"
         >
-          <Trash2 className="w-5 h-5" />
+          <RefreshCcwDot className="w-5 h-5" />
         </button>
       </div>
     </div>
