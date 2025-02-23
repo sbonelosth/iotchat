@@ -69,7 +69,7 @@ export function InputArea({
     });
   };
 
-  const removeAttachment = () => {
+  const removeAttachment: () => void = () => {
     setAttachment(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -81,7 +81,7 @@ export function InputArea({
   }, []);
 
   return (
-    <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent p-4">
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent p-2 pt-1">
       <div className="max-w-4xl mx-auto space-y-3">
         {error && (
           <div className="text-red-400 text-sm bg-red-900/20 p-2 rounded-lg">

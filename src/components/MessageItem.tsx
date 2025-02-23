@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RefreshCw, Edit2, ThumbsUp, ThumbsDown, Copy, Check, Paperclip } from 'lucide-react';
 import { Message } from '../types';
 import { Toast } from './Toast';
@@ -16,16 +16,25 @@ export function MessageItem({ message, isLatest, onRetry, onEdit, onLike, onDisl
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [previousFeedback, setPreviousFeedback] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPreviousFeedback(message.feedback ?? null);
+  }, [message.feedback]);
 
   const handleLike = () => {
-    setToastMessage("I'm glad you like my response.");
-    setShowToast(true);
+    if (previousFeedback !== 'like') {
+      setToastMessage("I'm glad you like my response.");
+      setShowToast(true);
+    }
     onLike?.(message);
   };
 
   const handleDislike = () => {
-    setToastMessage("I'm sorry. Refresh your query to get a better response.");
-    setShowToast(true);
+    if (previousFeedback !== 'dislike') {
+      setToastMessage("I'm sorry. Refresh your query to get a better response.");
+      setShowToast(true);
+    }
     onDislike?.(message);
   };
 

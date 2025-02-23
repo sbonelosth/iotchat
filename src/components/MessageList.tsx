@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { MessageItem } from './MessageItem';
 import { Message } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { useChat } from '../contexts/ChatContext';
+import { Suggestions } from './Suggestions';
 
 interface MessageListProps {
   messages: Message[];
@@ -12,6 +14,7 @@ interface MessageListProps {
 
 export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: MessageListProps) {
   const { viewportHeight } = useAuth();
+  const { sendQuestion } = useChat();
   const chatAreaRef = useRef<HTMLDivElement>(null);
   
   const handleLike = (message: Message) => {
@@ -20,6 +23,10 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
 
   const handleDislike = (message: Message) => {
     message.feedback = message.feedback === 'dislike' ? undefined : 'dislike';
+  };
+
+  const handleSuggestionClick = (question: string) => {
+    sendQuestion(question, 'MAIN', null);
   };
 
   const nonUserMessages = messages.filter(m => !m.isUser);
@@ -32,7 +39,13 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
   }, [viewportHeight, messages]);
 
   return (
-    <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 118px - 64px)` }} className="flex flex-col gap-2 p-4 overflow-y-auto">
+    <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 64px)` }} className="flex flex-col gap-2 p-4 pb-[96px] overflow-y-auto">
+      <div className="flex justify-center">
+        <p className="text-xl text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-200 to-blue-400 font-bold">Hello, I'm your AI-powered course assistant.</p>
+      </div>
+      <div className="flex justify-center">
+        <Suggestions onSuggestionClick={handleSuggestionClick} />
+      </div>
       {messages.map((message) => (
         <MessageItem
           key={message.id}
