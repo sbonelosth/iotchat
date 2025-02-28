@@ -32,7 +32,7 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
   }, [viewportHeight, messages]);
 
   return (
-    <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 64px)` }} className="flex flex-col gap-2 p-4 pb-[96px] overflow-y-auto">
+    <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 64px)` }} className="flex flex-col gap-2 p-4 pb-[145px] overflow-y-auto">
       <div className="flex justify-center">
         <p className="text-xl text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-200 to-blue-400 font-bold">Hello, I'm your AI-powered course assistant.</p>
       </div>

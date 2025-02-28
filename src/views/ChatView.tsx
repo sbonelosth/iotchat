@@ -3,7 +3,7 @@ import { MessageList } from '../components/MessageList';
 import { InputArea } from '../components/InputArea';
 import { useChat } from '../contexts/ChatContext';
 
-export default function Chat() {
+export default function ChatView() {
     const { 
         messages,
         input, 

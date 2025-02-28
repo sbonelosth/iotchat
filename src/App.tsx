@@ -1,12 +1,12 @@
 import { AuthProvider } from './contexts/AuthContext';
 import { ChatProvider } from './contexts/ChatContext';
-import Chat from './views/Chat';
+import ChatView from './views/ChatView';
 
 function App() {
   return (
     <AuthProvider>
       <ChatProvider>
-        <Chat />
+        <ChatView />
       </ChatProvider>
     </AuthProvider>
   );
