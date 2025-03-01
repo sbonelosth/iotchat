@@ -1,6 +1,6 @@
 import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { Send, Paperclip, X } from 'lucide-react';
-import { ChatScopeType, FileAttachment } from '../types';
+import { FileAttachment } from '../types';
 import { useChat } from '../contexts/ChatContext';
 import { Suggestions } from './Suggestions';
 
@@ -8,7 +8,7 @@ interface InputAreaProps {
   input: string;
   isResponseLoading: boolean;
   editingMessageId: string | null;
-  onSubmit: (e: React.FormEvent, context: ChatScopeType, attachment: FileAttachment | null) => void;
+  onSubmit: (e: React.FormEvent, attachment: FileAttachment | null) => void;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -25,23 +25,18 @@ export function InputArea({
   onSubmit,
   onInputChange,
 }: InputAreaProps) {
-  const { chatScope, setChatScope, sendQuestion } = useChat();
+  const { sendQuestion } = useChat();
   const [attachment, setAttachment] = useState<FileAttachment | null>(null);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(e, chatScope, attachment);
+    onSubmit(e, attachment);
     setAttachment(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  };
-
-  const handleContextChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setChatScope(e.target.value as ChatScopeType);
-    localStorage.setItem('selectedContext', e.target.value);
   };
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +66,7 @@ export function InputArea({
   };
 
   const handleSuggestionClick = (question: string) => {
-    sendQuestion(question, 'MAIN', null);
+    sendQuestion(question, null);
   };
 
   const removeAttachment: () => void = () => {
@@ -80,10 +75,6 @@ export function InputArea({
       fileInputRef.current.value = '';
     }
   };
-
-  useEffect(() => {
-    setChatScope(localStorage.getItem('selectedContext') as ChatScopeType || 'MAIN');
-  }, []);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent p-2 pt-1">
@@ -127,36 +118,8 @@ export function InputArea({
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {(['MAIN', 'FAI/IS', 'BICIOT'] as const).map((context) => (
-                <label
-                  key={context}
-                  className="relative"
-                >
-                  <input
-                    type="radio"
-                    name="context"
-                    value={context}
-                    checked={chatScope === context}
-                    onChange={handleContextChange}
-                    className="absolute opacity-0 w-0 h-0"
-                  />
-                  <span
-                    className={`
-                      inline-block px-4 py-1 rounded-lg text-xs font-bold
-                      transition-all duration-200 cursor-pointer
-                      ${chatScope === context
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg scale-105'
-                        : 'bg-white text-gray-700 hover:bg-gray-100'
-                      }
-                    `}
-                  >
-                    {context}
-                  </span>
-                </label>
-              ))}
+            <div className="flex items-center gap-2">  
             </div>
-
             <div>
               <input
                 ref={fileInputRef}

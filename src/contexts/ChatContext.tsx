@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ChatContextType, ChatScopeType, Message, FileAttachment } from '../types';
+import { ChatContextType, Message, FileAttachment } from '../types';
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -8,19 +8,11 @@ const STORAGE_KEY = import.meta.env.VITE_HISTORY;
 const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
-    const [chatScope, setChatScope] = useState<ChatScopeType>('MAIN');
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isResponseLoading, setIsResponseLoading] = useState(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     
-    useEffect(() => {
-        const storedContext = localStorage.getItem('selectedContext');
-        if (storedContext) {
-            setChatScope(storedContext as ChatScopeType);
-        }
-    }, []);
-
     // Load messages from localStorage on initial render
     useEffect(() => {
         try {
@@ -76,7 +68,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     const sendQuestion = async (
         text: string,
-        chatScope: ChatScopeType,
         attachment: FileAttachment | null,
         messageId?: string
     ) => {
@@ -102,8 +93,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
         try {
             const formData = new FormData();
-            formData.append('question', text);
-            formData.append('chat_scope', chatScope);
+            formData.append('question', `BICIOT LEVEL 3: ${text}`);
             formData.append('history', JSON.stringify(messages));
             formData.append('now', new Date().toDateString());
             
@@ -146,16 +136,15 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     const handleSendQuestion = async (
         e: React.FormEvent,
-        chatScope: ChatScopeType,
         attachment: FileAttachment | null
     ) => {
         e.preventDefault();
         if (!input.trim()) return;
 
         if (editingMessageId) {
-            await handleSendEdit(e, chatScope, attachment);
+            await handleSendEdit(e, attachment);
         } else {
-            await sendQuestion(input, chatScope, attachment);
+            await sendQuestion(input, attachment);
         }
     };
 
@@ -163,7 +152,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         const messageIndex = messages.findIndex(m => m.id === message.id);
         if (messageIndex !== -1) {
             setMessages(prev => prev.slice(0, messageIndex));
-            await sendQuestion(message.text, 'MAIN', null);
+            await sendQuestion(message.text, null);
         }
     };
 
@@ -174,7 +163,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     const handleSendEdit = async (
         e: React.FormEvent,
-        chatScope: ChatScopeType,
         attachment: FileAttachment | null
     ) => {
         e.preventDefault();
@@ -183,7 +171,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         const messageIndex = messages.findIndex(m => m.id === editingMessageId);
         if (messageIndex !== -1) {
             setMessages(prev => prev.slice(0, messageIndex));
-            await sendQuestion(input, chatScope, attachment);
+            await sendQuestion(input, attachment);
         }
 
         setEditingMessageId(null);
@@ -196,7 +184,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
 
     return (
-        <ChatContext.Provider value={{ chatScope, setChatScope, messages, setMessages, input, setInput, isResponseLoading, setIsResponseLoading, editingMessageId, setEditingMessageId, sendQuestion, handleSendQuestion, handleRetry, handleEditQuestion, handleSendEdit, handleClearMessages }}>
+        <ChatContext.Provider value={{ messages, setMessages, input, setInput, isResponseLoading, setIsResponseLoading, editingMessageId, setEditingMessageId, sendQuestion, handleSendQuestion, handleRetry, handleEditQuestion, handleSendEdit, handleClearMessages }}>
             {children}
         </ChatContext.Provider>
     );

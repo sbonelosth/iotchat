@@ -17,8 +17,6 @@ export interface Message {
   };
 }
 
-export type ChatScopeType = 'MAIN' | 'FAI/IS' | 'BICIOT';
-
 export interface FileAttachment {
   file: File;
   name: string;
@@ -34,8 +32,6 @@ export interface AuthContextType {
 }
 
 export interface ChatContextType {
-  chatScope: ChatScopeType;
-  setChatScope: (scope: ChatScopeType) => void;
   messages: Message[];
   setMessages: (messages: Message[]) => void;
   input: string;
@@ -44,11 +40,11 @@ export interface ChatContextType {
   setIsResponseLoading: (isLoading: boolean) => void;
   editingMessageId: string | null;
   setEditingMessageId: (messageId: string | null) => void;
-  sendQuestion: (text: string, chatScope: ChatScopeType, attachment: FileAttachment | null, messageId?: string) => void;
+  sendQuestion: (text: string, attachment: FileAttachment | null, messageId?: string) => void;
   handleClearMessages: () => void;
   handleRetry: (message: Message) => void;
   handleEditQuestion: (message: Message) => void;
-  handleSendQuestion: (e: React.FormEvent, chatScope: ChatScopeType, attachment: FileAttachment | null) => void;
-  handleSendEdit: (e: React.FormEvent, chatScope: ChatScopeType, attachment: FileAttachment | null) => void;
+  handleSendQuestion: (e: React.FormEvent, attachment: FileAttachment | null) => void;
+  handleSendEdit: (e: React.FormEvent, attachment: FileAttachment | null) => void;
 }
 
