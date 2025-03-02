@@ -1,18 +1,11 @@
-import React, { useState } from 'react';
+import { useChat } from "../contexts/ChatContext";
 
 interface SuggestionsProps {
   onSuggestionClick: (suggestion: string) => void;
 }
 
-const initialSuggestions = [
-  { label: 'IoT career choices', question: 'What are some career choices in IoT?' },
-  { label: 'Today\'s timetable', question: 'Show me today\'s lectures and venues.' },
-  { label: 'My semester lecturers', question: 'Who are my lecturers this semester?' },
-];
-
 export function Suggestions({ onSuggestionClick }: SuggestionsProps) {
-  const [suggestions, setSuggestions] = useState(initialSuggestions);
-
+  const { suggestions, setSuggestions } = useChat();
   const handleSuggestionClick = (question: string, label: string) => {
     onSuggestionClick(question);
     setSuggestions(suggestions.filter(suggestion => suggestion.label !== label));

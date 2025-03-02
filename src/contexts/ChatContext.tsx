@@ -7,11 +7,18 @@ const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 const STORAGE_KEY = import.meta.env.VITE_HISTORY;
 const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
+const initialSuggestions = [
+  { label: 'IoT career choices', question: 'What are some career choices in IoT?' },
+  { label: 'Today\'s timetable', question: 'Show me today\'s lectures and venues.' },
+  { label: 'My semester lecturers', question: 'Who are my lecturers this semester?' },
+];
+
 export function ChatProvider({ children }: { children: React.ReactNode }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isResponseLoading, setIsResponseLoading] = useState(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+    const [suggestions, setSuggestions] = useState(initialSuggestions);
     
     // Load messages from localStorage on initial render
     useEffect(() => {
@@ -184,7 +191,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
 
     return (
-        <ChatContext.Provider value={{ messages, setMessages, input, setInput, isResponseLoading, setIsResponseLoading, editingMessageId, setEditingMessageId, sendQuestion, handleSendQuestion, handleRetry, handleEditQuestion, handleSendEdit, handleClearMessages }}>
+        <ChatContext.Provider value={{ messages, setMessages, input, setInput, suggestions, setSuggestions, isResponseLoading, setIsResponseLoading, editingMessageId, setEditingMessageId, sendQuestion, handleSendQuestion, handleRetry, handleEditQuestion, handleSendEdit, handleClearMessages }}>
             {children}
         </ChatContext.Provider>
     );

@@ -36,6 +36,8 @@ export interface ChatContextType {
   setMessages: (messages: Message[]) => void;
   input: string;
   setInput: (input: string) => void;
+  suggestions: { label: string; question: string }[];
+  setSuggestions: (suggestions: { label: string; question: string }[]) => void;
   isResponseLoading: boolean;
   setIsResponseLoading: (isLoading: boolean) => void;
   editingMessageId: string | null;
