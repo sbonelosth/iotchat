@@ -64,7 +64,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
         type="text"
         value={studentNumber}
         onChange={(e) => setStudentNumber(e.target.value)}
-        placeholder="Enter your student number"
+        placeholder=""
         icon={User}
         required
       />
@@ -74,7 +74,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
         type={showPassword ? "text" : "password"}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="Enter your password"
+        placeholder=""
         icon={Lock}
         rightIcon={showPassword ? EyeOff : Eye}
         onRightIconClick={() => setShowPassword(!showPassword)}

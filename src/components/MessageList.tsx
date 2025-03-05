@@ -46,9 +46,9 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
 
   return (
     <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 64px)` }} className={`flex flex-col gap-2 p-4 ${suggestions.length === 0 ? 'pb-[100px]' : 'pb-[145px]'} overflow-y-auto`}>
-      <div className="flex justify-center">
-        <p className="text-xl text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-200 to-blue-400 font-bold">Hello, how can I help you today?</p>
-      </div>
+      {!messages.length && <div className="flex justify-center">
+        <p className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-pink-200 to-blue-400 font-bold">Hello, how can I help you today?</p>
+      </div>}
       {messages.map((message) => (
         <MessageItem
           key={message.id}
@@ -65,7 +65,7 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
         <div className="flex justify-start">
           <div className="bg-transparent">
             <l-jelly
-              size="40"
+              size="30"
               speed="0.9"
               color="aliceblue"
             ></l-jelly>

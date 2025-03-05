@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface SelectOption {
   value: string;
@@ -10,7 +10,7 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
   label?: string;
   options: SelectOption[];
   error?: string;
-  icon?: typeof LucideIcon;
+  icon?: typeof ChevronDown;
   onChange?: (value: string) => void;
 }
 
@@ -40,9 +40,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             onChange={handleChange}
             className={`bg-gray-800 text-white placeholder-gray-400 block w-full 
               ${Icon ? 'pl-10' : 'pl-3'} 
-              pr-3 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+              pr-10 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
               ${error ? 'border border-red-500' : ''}
-              ${className}`}
+              ${className} appearance-none`}
             {...props}
           >
             {options.map((option) => (
@@ -52,9 +52,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ))}
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
+            <ChevronDown className="h-5 w-5 text-gray-400" />
           </div>
         </div>
         {error && <p className="mt-1 text-sm text-red-500">{error}</p>}

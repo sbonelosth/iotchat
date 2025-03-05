@@ -100,7 +100,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
   return (
     <form onSubmit={handleSubmit}>
       {showError && (
-        <div className="bg-red-900/30 border border-red-500 text-red-200 px-4 py-2 rounded-lg">
+        <div className="bg-red-900/30 border border-red-500 border-dotted text-red-200 px-4 py-2 mb-4 rounded-lg">
           {authError.message}
         </div>
       )}
@@ -111,7 +111,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
           type="text"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          placeholder="First name"
+          placeholder=""
           required
         />
         <Input
@@ -119,7 +119,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          placeholder="Last name"
+          placeholder=""
           required
         />
       </div>
@@ -129,7 +129,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
         type="text"
         value={studentNumber}
         onChange={(e) => setStudentNumber(e.target.value)}
-        placeholder="Student number"
+        placeholder=""
         icon={User}
         required
       />
@@ -147,7 +147,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
         type={showPassword ? "text" : "password"}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="Create a password"
+        placeholder=""
         icon={Lock}
         rightIcon={showPassword ? EyeOff : Eye}
         onRightIconClick={() => setShowPassword(!showPassword)}

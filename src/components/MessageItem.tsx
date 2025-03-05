@@ -7,7 +7,7 @@ import { useChat } from '../contexts/ChatContext';
 interface MessageItemProps {
   message: Message;
   isLatest: boolean;
-  latestUserMessage?: Message | null
+  latestUserMessage?: Message | null;
   onRetry?: (message: Message) => void;
   onEdit?: (message: Message) => void;
   onLike?: (message: Message) => void;
@@ -27,21 +27,29 @@ export function MessageItem({ message, isLatest, onRetry, latestUserMessage, onE
   }, [message]);
 
   const handleLike = () => {
-    if (previousFeedback !== 'like') {
+    if (previousFeedback === 'like') {
+      setPreviousFeedback(null);
+      onLike?.({ ...message, feedback: undefined });
+    } else {
+      setPreviousFeedback('like');
       setToastMessage("Feedback received.");
       setSelectedIcon(CheckCircle);
       setShowToast(true);
+      onLike?.({ ...message, feedback: 'like' });
     }
-    onLike?.(message);
   };
 
   const handleDislike = () => {
-    if (previousFeedback !== 'dislike') {
+    if (previousFeedback === 'dislike') {
+      setPreviousFeedback(null);
+      onDislike?.({ ...message, feedback: undefined });
+    } else {
+      setPreviousFeedback('dislike');
       setToastMessage("Retry for better responses.");
       setSelectedIcon(InfoIcon);
       setShowToast(true);
+      onDislike?.({ ...message, feedback: 'dislike' });
     }
-    onDislike?.(message);
   };
 
   const handleCopy = async () => {
@@ -66,7 +74,7 @@ export function MessageItem({ message, isLatest, onRetry, latestUserMessage, onE
           <div
             className={`max-w-[70vw] sm:max-w-lg p-4 rounded-2xl ${message.isUser
                 ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md'
-                : 'max-w-[80vw] bg-transparent'
+                : 'max-w-[80vw] bg-transparent p-0'
               }`}
           >
             <p
@@ -92,12 +100,12 @@ export function MessageItem({ message, isLatest, onRetry, latestUserMessage, onE
               </button>
             </div>
           ) : (
-            <div className={`flex gap-2 mt-2 justify-end ${!isLatest && 'hidden group-hover:flex'}`}>
+            <div className={`flex gap-2 mt-2 justify-start ${!isLatest && 'hidden group-hover:flex'}`}>
               {isLatest && !isResponseLoading ? (
                 <>
                   <button
                     onClick={handleLike}
-                    className={`p-2 rounded-full transition-colors ${message.feedback === 'like'
+                    className={`p-2 rounded-full transition-colors ${previousFeedback === 'like'
                         ? 'bg-blue-500 text-white'
                         : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
                       }`}
@@ -107,7 +115,7 @@ export function MessageItem({ message, isLatest, onRetry, latestUserMessage, onE
                   </button>
                   <button
                     onClick={handleDislike}
-                    className={`p-2 rounded-full transition-colors ${message.feedback === 'dislike'
+                    className={`p-2 rounded-full transition-colors ${previousFeedback === 'dislike'
                         ? 'bg-blue-500 text-white'
                         : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
                       }`}

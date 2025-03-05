@@ -39,7 +39,7 @@ export default function AuthPage() {
             </h1>
             <p className="text-blue-200">
               {isLogin 
-                ? 'Sign in to access your Campus account' 
+                ? 'Login to access your Campus AI account' 
                 : 'Join Campus AI for a personalized experience'}
             </p>
           </div>
