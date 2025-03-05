@@ -12,12 +12,12 @@ export function Suggestions({ onSuggestionClick }: SuggestionsProps) {
   };
 
   return (
-    <div className="flex gap-2 overflow-x-auto pl-2 env(safe-area-inset-bottom) hide-scrollbar">
+    <div className="flex gap-2 overflow-x-auto env(safe-area-inset-bottom) hide-scrollbar">
       {suggestions.map((suggestion) => (
         <button
           key={suggestion.label}
           onClick={() => handleSuggestionClick(suggestion.question, suggestion.label)}
-          className="p-1 px-6 bg-gradient-to-r from-pink-300 to-blue-400 text-gray-800 text-nowrap font-semibold rounded-full hover:opacity-80 transition-opacity"
+          className="p-1 px-6 bg-gradient-to-r from-pink-300 to-blue-400 text-gray-800 text-nowrap font -semibold rounded-full hover:opacity-80 transition-opacity"
         >
           {suggestion.label}
         </button>

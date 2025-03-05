@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MessageItem } from './MessageItem';
 import { Message } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
+import { jelly } from 'ldrs'
 
 interface MessageListProps {
   messages: Message[];
@@ -15,7 +16,8 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
   const { viewportHeight } = useAuth();
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const { suggestions } = useChat();
-  
+  const [latestUserMessage, setLatestUserMessage] = useState<Message | null>(null);
+
   const handleLike = (message: Message) => {
     message.feedback = message.feedback === 'like' ? undefined : 'like';
   };
@@ -28,10 +30,19 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
   const latestAiMessage = nonUserMessages[nonUserMessages.length - 1];
 
   useEffect(() => {
+    const userMessages = messages.filter(m => m.isUser);
+    if (userMessages.length > 0) {
+      setLatestUserMessage(userMessages[userMessages.length - 1]);
+    }
+  }, [messages]);
+
+  useEffect(() => {
     if (chatAreaRef.current) {
       chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
     }
   }, [viewportHeight, messages]);
+
+  jelly.register()
 
   return (
     <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 64px)` }} className={`flex flex-col gap-2 p-4 ${suggestions.length === 0 ? 'pb-[100px]' : 'pb-[145px]'} overflow-y-auto`}>
@@ -43,6 +54,7 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
           key={message.id}
           message={message}
           isLatest={!message.isUser && message.id === latestAiMessage?.id}
+          latestUserMessage={latestUserMessage}
           onRetry={onRetry}
           onEdit={onEdit}
           onLike={handleLike}
@@ -51,12 +63,12 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
       ))}
       {isResponseLoading && (
         <div className="flex justify-start">
-          <div className="bg-gradient-to-r from-blue-100 to-white p-4 rounded-2xl shadow-md">
-            <div className="flex gap-2">
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" />
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-.3s]" />
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-.5s]" />
-            </div>
+          <div className="bg-transparent">
+            <l-jelly
+              size="40"
+              speed="0.9"
+              color="aliceblue"
+            ></l-jelly>
           </div>
         </div>
       )}

@@ -17,7 +17,7 @@ export default function ChatView() {
     } = useChat();
     
     return (
-        <div className={`flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800`}>
+        <div className="flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 min-h-screen">
             <AppBar onClearMessages={handleClearMessages} />
 
             <div className="flex-1 overflow-y-auto max-w-4xl w-full mx-auto">

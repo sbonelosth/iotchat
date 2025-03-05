@@ -1,5 +1,5 @@
 import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { Send, Paperclip, X } from 'lucide-react';
+import { Send, Paperclip, X, Sparkles } from 'lucide-react';
 import { FileAttachment } from '../types';
 import { useChat } from '../contexts/ChatContext';
 import { Suggestions } from './Suggestions';
@@ -79,13 +79,16 @@ export function InputArea({
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent p-2 pt-1">
       <div className="max-w-4xl mx-auto space-y-3">
-        <Suggestions onSuggestionClick={handleSuggestionClick} />
+        <div className="flex items-center relative">
+          <Sparkles className="w-12 pr-2 aspect-square text-pink-300" />
+          <Suggestions onSuggestionClick={handleSuggestionClick} />
+        </div>
         {error && (
           <div className="text-red-400 text-sm bg-red-900/20 p-2 rounded-lg">
             {error}
           </div>
         )}
-        
+
         {attachment && (
           <div className="flex items-center gap-2 bg-blue-900/20 p-2 rounded-lg text-blue-200">
             <Paperclip className="w-4 h-4" />
@@ -118,7 +121,7 @@ export function InputArea({
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">  
+            <div className="flex items-center gap-2">
             </div>
             <div>
               <input
