@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MessageItem } from './MessageItem';
-import { Message } from '../types';
+import { Message } from '../types/index';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
 import { jelly } from 'ldrs'

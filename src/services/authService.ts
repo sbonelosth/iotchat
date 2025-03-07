@@ -1,6 +1,6 @@
 import { User } from "../types/index";
 
-const endpointUrl = import.meta.env.VITE_AUTH_URL + "/auth";
+const endpointUrl = import.meta.env.VITE_BASE_URL;
 const options = {
     method: 'POST',
     headers: {
@@ -9,11 +9,11 @@ const options = {
 }
 
 export const authService = {
-    async login(identifier: string, password: string) {
+    async login(username: string, password: string) {
         try {
             const response = await fetch(`${endpointUrl}/login`, {
                 ...options,
-                body: JSON.stringify({ identifier, password })
+                body: JSON.stringify({ username, password })
             });
             if (!response.ok) {
                 const error = await response.json();
@@ -60,35 +60,6 @@ export const authService = {
         } catch (error) {
             let errorMessage = 'An unexpected error occurred';
             return { success: false, error: { title: 'Oops', message: errorMessage } };
-        }
-    },
-
-    async refresh () {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-        try {
-            const token = localStorage.getItem('e58ea3edfbbbc2');
-            const response = await fetch(`${endpointUrl}/refresh`, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${token}`
-                },
-                signal: controller.signal
-            });
-            if (!response.ok) {
-                const error = await response.json();
-                return { success: false, error: error.error };
-            }
-
-            clearTimeout(timeoutId);
-
-            const result = await response.json();
-            return { success: true, data: result };
-        } catch (error: any) {
-            let errorMessage = 'An error occurred';
-            return { success: false, error: errorMessage };
         }
     }
 };

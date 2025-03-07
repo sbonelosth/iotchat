@@ -1,15 +1,15 @@
 export interface User {
-  studentNumber: string;
-  firstName: string;
-  lastName: string;
+  username: string;
+  name: string;
   email: string;
   password: string;
   faculty: string;
   department: string;
-  qualification: string;
+  course: string;
   verified: boolean;
-  joinDate: string;
+  joined: string;
   code?: string;
+  accessToken?: string;
 }
 
 export interface Message {
@@ -33,8 +33,8 @@ export interface FileAttachment {
 }
 
 export interface AuthContextType {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  user: Partial<User> | null;
+  setUser: React.Dispatch<React.SetStateAction<Partial<User> | null>>;
   isAuthenticated: boolean;
   authError: { title: string; message: string };
   setAuthError: React.Dispatch<React.SetStateAction<{ title: string; message: string }>>;
@@ -43,7 +43,6 @@ export interface AuthContextType {
   login: (identifier: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
   signup: (signupData: Partial<User>) => Promise<{ success: boolean; data?: any; error?: any }>;
   verify: (email: string, otp: any) => Promise<{ success: boolean; data?: any; error?: any }>;
-  refresh: () => Promise<{ success: boolean; data?: any; error?: any }>;
   viewportHeight: number;
   setViewportHeight: React.Dispatch<React.SetStateAction<number>>;
   logout: () => void;

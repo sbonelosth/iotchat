@@ -6,7 +6,7 @@ import { authService } from '../services/authService';
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Partial<User> | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
   const [authError, setAuthError] = useState({ title: '', message: '' });
@@ -21,7 +21,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error('Error parsing stored user data:', error);
         localStorage.removeItem('user');
       }
     }
@@ -39,6 +38,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/');
+    }
+  }, [isAuthenticated]);
+
   const loginHandler = async (identifier: string, password: string) => {
     setIsLoading(true);
     const result = await authService.login(identifier, password);
@@ -46,13 +52,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!result.success) {
       const error = result.error;
       setAuthError(error as { title: string; message: string });
+      if (authError.message.includes('verify')) {
+        navigate('/verify');
+      }
       setIsAuthenticated(false);
       setUser(result.data);
     } else {
-      localStorage.setItem('e58ea3edfbbbc2', result.data.user.accessToken);
-      setUser(result.data.user);
+      setUser(result.data.user as Partial<User>);
       setIsAuthenticated(true);
-      navigate('/');
     }
 
     setIsLoading(false);
@@ -66,12 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const error = result.error;
       setAuthError(error as { title: string; message: string });
       setIsAuthenticated(false);
-    }
-
-    if (result.success) {
-      localStorage.setItem('e58ea3edfbbbc2', result.data.user.accessToken);
-      setUser(result.data.user);
-      setIsAuthenticated(true);
+    } else {
+      setUser(result.data.user as Partial<User>);
       navigate('/verify');
     }
 
@@ -87,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthError(error as { title: string; message: string });
       setIsAuthenticated(false);
     } else {
-      if (result.data?.sent) {
+      if (result.data?.sent as boolean) {
         setIsAuthenticated(false);
         navigate('/verify');
       } else {
@@ -97,19 +100,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(result.data.user);
     }
     setIsLoading(false);
-    return result;
-  };
-
-  const refreshHandler = async () => {
-    setIsRefreshing(true);
-    const result = await authService.refresh();
-    if (result.success) {
-      setUser(result.data.user);
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-    setIsRefreshing(false);
     return result;
   };
 
@@ -133,7 +123,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login: loginHandler,
       signup: signupHandler,
       verify: verifyEmailHandler,
-      refresh: refreshHandler,
       logout
     }}>
       {children}

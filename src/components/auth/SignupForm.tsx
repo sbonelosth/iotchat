@@ -12,7 +12,7 @@ interface SignupFormProps {
 }
 
 export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
-  const { user, signup, isLoading, authError, setAuthError } = useAuth();
+  const { signup, isLoading, authError, setAuthError } = useAuth();
   const [studentNumber, setStudentNumber] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -44,15 +44,14 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
 
   const handleRegistrationConfirm = async () => {
     const signupData = {
-      studentNumber,
-      firstName,
-      lastName,
+      username: studentNumber,
+      name: firstName + ' ' + lastName,
       email,
       password,
       faculty: selectedFaculty,
       department: selectedDepartment,
-      qualification: selectedQualification,
-      joinDate: new Date().toISOString(),
+      course: selectedQualification,
+      joined: new Date().toString(),
     }
 
     try {

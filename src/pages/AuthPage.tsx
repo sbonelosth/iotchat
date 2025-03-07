@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Bot, X } from 'lucide-react';
 import { LoginForm } from '../components/auth/LoginForm';
 import { SignupForm } from '../components/auth/SignupForm';
-import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const { user } = useAuth();
   const navigate = useNavigate();
-
-  // If user is already logged in, redirect to home
-  if (user) {
-    navigate('/');
-    return null;
-  }
 
   const handleCancelAuth = () => {
     navigate('/');

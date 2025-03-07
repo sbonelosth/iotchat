@@ -53,6 +53,7 @@ export default function VerificationForm({ length = 6, onComplete, disabled = fa
         const codeValue = newCode.join('');
         if (codeValue.length === length) {
             onComplete(codeValue);
+            console.log("Code: ", codeValue);
         }
     };
 

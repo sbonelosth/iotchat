@@ -35,11 +35,11 @@ export default function VerificationPage() {
         }
     };
 
-    const handleVerification = async (otp: string) => {
+    const handleVerification = async (code: string) => {
         setError(null);
-        const result = await verify(user?.email as string, otp);
+        const result = await verify(user?.email as string, code);
         if (result.success) {
-            navigate('/home');
+            navigate('/');
         } else {
             setError(result.error?.message)
         }
@@ -60,7 +60,10 @@ export default function VerificationPage() {
                     <div className="text-center space-y-4">
                         <h1 className="text-2xl font-semibold">Almost There</h1>
                         <p className="text-gray-400">
-                            A verification code has been sent to <span className="text-yellow-400">{user?.email || <span className='text-gray-400'>your email</span>}</span>
+                            A verification code has been sent to <span className="text-blue-400">{user?.email || <span className='text-gray-400'>your email</span>}</span>
+                        </p>
+                        <p className="text-gray-400">
+                            Can't find the email? Check your spam or junk mail folder.
                         </p>
                     </div>
 
@@ -85,7 +88,7 @@ export default function VerificationPage() {
                         {isLoading && (
                             <div className="flex items-center justify-center space-x-2 text-blue-400">
                                 <Loader className="w-5 h-5 animate-spin" />
-                                <span>Verifying...</span>
+                                <span>Please wait...</span>
                             </div>
                         )}
                     </div>
