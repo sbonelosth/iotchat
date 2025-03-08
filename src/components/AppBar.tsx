@@ -41,7 +41,7 @@ export function AppBar({ onClearMessages }: AppBarProps) {
   }, [showAccountModal]);
 
   return (
-    <div className="sticky top-0 bg-transparent shadow-lg px-6 py-2 z-10 env(safe-area-inset-top)">
+    <div className="sticky top-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 shadow-lg px-6 py-2 z-10 env(safe-area-inset-top)">
       <div className="max-w-4xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Bot className="w-8 h-8 text-gray-900 bg-gradient-to-r from-pink-200 to-blue-400 p-1 rounded-full" />
