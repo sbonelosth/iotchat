@@ -72,7 +72,7 @@ export function InputArea({
   };
 
   const handleFocused = () => {
-    setViewportHeight(window.innerHeight);
+    setViewportHeight(500);
   };
 
   const handleBlur = () => {
