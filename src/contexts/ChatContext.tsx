@@ -119,7 +119,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
         try {
             const formData = new FormData();
-            formData.append('question', `BICIOT LEVEL 3: ${text}`);
+            formData.append('question', `${user?.course || ''}: ${text}`);
             formData.append('history', JSON.stringify(messages));
             formData.append('course', user?.course || 'guest');
             formData.append('now', new Date().toDateString());
