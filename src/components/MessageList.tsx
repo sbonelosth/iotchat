@@ -13,7 +13,7 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: MessageListProps) {
-  const { viewportHeight } = useAuth();
+  const { user, viewportHeight } = useAuth();
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const { suggestions } = useChat();
   const [latestUserMessage, setLatestUserMessage] = useState<Message | null>(null);
@@ -46,8 +46,8 @@ export function MessageList({ messages, onRetry, onEdit, isResponseLoading }: Me
 
   return (
     <div ref={chatAreaRef} style={{ height: `calc(${viewportHeight}px - 64px)` }} className={`flex flex-col gap-2 p-4 ${suggestions.length === 0 ? 'pb-[100px]' : 'pb-[145px]'} overflow-y-auto`}>
-      {!messages.length && <div className="flex justify-center">
-        <p className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-pink-200 to-blue-400 font-bold">Hello, how can I help you today?</p>
+      {!messages.length && <div className="flex justify-center ml-2">
+        <p className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-pink-200 to-blue-400 font-bold">{`Hello${user ? ' ' + user?.name?.split(' ')[0] : ''}, how can I help you today?`}</p>
       </div>}
       {messages.map((message) => (
         <MessageItem

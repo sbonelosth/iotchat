@@ -20,17 +20,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       { label: 'IoT career choices', question: 'What are some career choices in IoT?' },
       { label: 'Today\'s timetable', question: 'Show me today\'s lectures and venues.' },
       { label: 'My semester lecturers', question: `Show me ${user?.course} lecturers this semester?` },
-      { label: 'Change of Carriculum', question: 'Where to go if I want to add or delete a module or change my qualification?' },
-      { label: 'Change of contact details', question: 'How do I change my contact details?' },
-      { label: 'Academic record', question: 'How much is the academic transcript?' },
+      { label: 'Academic record fee', question: 'How much is the academic transcript?' },
     ];
     
     const guestSuggestions = [
-      { label: 'Introduce DUT', question: 'Tell me a little about DUT.' },
+      { label: 'Falculties', question: 'How many faculties does DUT have and what are they?' },
+      { label: 'Qualifications offered', question: 'What are the qualifications by department offered in DUT?' },
       { label: 'Registration fees', question: 'What are DUT\'s registration fees for both tuition and residence for full-time students?' },
-      { label: 'Faculties', question: 'How many faculties does DUT have and what are they?' },
-      { label: 'Campuses', question: 'How many campuses does DUT have?' },
-      { label: 'General enquiries', question: 'What are contact details for general enquiries?' },
+      { label: 'General enquiries contacts', question: 'What are contact details for general enquiries?' },
     ];
     const [suggestions, setSuggestions] = useState(initialSuggestions);
 
