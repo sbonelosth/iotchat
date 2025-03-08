@@ -71,11 +71,13 @@ export function InputArea({
     sendQuestion(question, null);
   };
 
-  const handleFocused = () => {
-    setViewportHeight(500);
+  const handleFocused = (e: React.FocusEvent) => {
+    e.preventDefault();
+    setViewportHeight(window.innerHeight);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: React.FocusEvent) => {
+    e.preventDefault();
     setViewportHeight(window.innerHeight);
   };
 
