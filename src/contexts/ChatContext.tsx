@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ChatContextType, Message, FileAttachment } from '../types/index';
 import { useAuth } from './AuthContext';
+import { dummyService } from '../services/dummyService';
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -8,24 +9,38 @@ const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 const STORAGE_KEY = import.meta.env.VITE_HISTORY;
 const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const initialSuggestions = [
-  { label: 'IoT career choices', question: 'What are some career choices in IoT?' },
-  { label: 'Today\'s timetable', question: 'Show me today\'s lectures and venues.' },
-  { label: 'My semester lecturers', question: 'Who are my lecturers this semester?' },
-  { label: 'Change of Carriculum', question: 'Where to go if I want to add or delete a module or change my qualification?' },
-  { label: 'Change of contact details', question: 'How do I change my contact details?' },
-  { label: 'Academic record', question: 'How can I get my academic record?' },
-];
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isResponseLoading, setIsResponseLoading] = useState(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+    const { user } = useAuth();
+    const initialSuggestions = [
+      { label: 'IoT career choices', question: 'What are some career choices in IoT?' },
+      { label: 'Today\'s timetable', question: 'Show me today\'s lectures and venues.' },
+      { label: 'My semester lecturers', question: `Show me ${user?.course} lecturers this semester?` },
+      { label: 'Change of Carriculum', question: 'Where to go if I want to add or delete a module or change my qualification?' },
+      { label: 'Change of contact details', question: 'How do I change my contact details?' },
+      { label: 'Academic record', question: 'How much is the academic transcript?' },
+    ];
+    
+    const guestSuggestions = [
+      { label: 'Introduce DUT', question: 'Tell me a little about DUT.' },
+      { label: 'Registration fees', question: 'What are DUT\'s registration fees for both tuition and residence for full-time students?' },
+      { label: 'Faculties', question: 'How many faculties does DUT have and what are they?' },
+      { label: 'Campuses', question: 'How many campuses does DUT have?' },
+      { label: 'General enquiries', question: 'What are contact details for general enquiries?' },
+    ];
     const [suggestions, setSuggestions] = useState(initialSuggestions);
 
-    const { user } = useAuth();
-    
+    useEffect(() => {
+        const wakeup = async () => {
+            await dummyService.wakeup();
+        };
+        wakeup();
+    }, []);
+
     // Load messages from localStorage on initial render
     useEffect(() => {
         try {
@@ -77,6 +92,18 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         }
     }, [messages]);
 
+    useEffect(() => {
+        if (user?.course?.startsWith("BICIOT")) {
+            setSuggestions(initialSuggestions);
+        } else {
+            setSuggestions(guestSuggestions);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        
+    }, [])
+
     const isValidMessage = (message: any): message is Message => {
         return (
             typeof message === 'object' &&
@@ -119,7 +146,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
         try {
             const formData = new FormData();
-            formData.append('question', `${user?.course || ''}: ${text}`);
+            formData.append('question', `${text}`);
             formData.append('history', JSON.stringify(messages));
             formData.append('course', user?.course || 'guest');
             formData.append('now', new Date().toDateString());

@@ -1,5 +1,5 @@
-import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { Send, Paperclip, X, Sparkles } from 'lucide-react';
+import React, { useState, useRef, ChangeEvent } from 'react';
+import { Paperclip, X, Sparkles, PlusIcon, ArrowUp } from 'lucide-react';
 import { FileAttachment } from '../types';
 import { useChat } from '../contexts/ChatContext';
 import { Suggestions } from './Suggestions';
@@ -103,43 +103,39 @@ export function InputArea({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="flex gap-2">
+          <div className="flex items-center">
+            <div className="flex items-center justify-between bg-blue-950 rounded-l-xl">
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.docx"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="py-2 pl-2 flex items-center text-blue-500 hover:text-blue-800 cursor-pointer text-sm"
+                >
+                  <PlusIcon className="w-8 h-8" />
+                </label>
+              </div>
+            </div>
             <input
               type="text"
               value={input}
               onChange={onInputChange}
-              placeholder={editingMessageId ? "Edit your message" : "Message"}
-              className="flex-1 bg-blue-950 text-white placeholder-blue-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={editingMessageId ? "Edit your message" : "Message Campus AI"}
+              className="flex-1 bg-blue-950 text-white placeholder-blue-400 rounded-r-xl px-4 py-3 mr-2 focus:outline-none focus:ring-0 focus:ring-blue-500"
             />
             <button
               type="submit"
               disabled={isResponseLoading || !input.trim()}
-              className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-full aspect-square bg-gradient-to-r from-blue-600 to-blue-500 text-white p-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send className="w-5 h-5" />
+              <ArrowUp className="w-5 h-5" />
             </button>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-            </div>
-            <div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.docx"
-                onChange={handleFileSelect}
-                className="hidden"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="flex items-center gap-2 text-blue-200 hover:text-blue-100 cursor-pointer text-sm"
-              >
-                <Paperclip className="w-4 h-4" />
-                <span>Attach File</span>
-              </label>
-            </div>
           </div>
         </form>
       </div>
