@@ -1,100 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { User, Lock, Mail, Building, GraduationCap, Eye, EyeOff, UserPlus } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import React from 'react';
+import { User, Lock, Mail, Building, GraduationCap, Eye, EyeOff, UserPlus, AlertTriangle } from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
-import { facultyData, departmentData, qualificationData } from '../../data/data';
 import AuthModal from './AuthModal';
+import { useSignupForm } from '../../hooks/useSignupForm';
 
 interface SignupFormProps {
   onToggleForm: () => void;
 }
 
 export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
-  const { signup, isLoading, authError, setAuthError } = useAuth();
-  const [studentNumber, setStudentNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [selectedFaculty, setSelectedFaculty] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [selectedQualification, setSelectedQualification] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showError, setShowError] = useState(false);
-  const [isAgreement, setIsAgreement] = useState(false);
-  const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
-
-  useEffect(() => {
-    if (studentNumber) {
-      setEmail(`${studentNumber}@dut4life.ac.za`);
-    }
-  }, [studentNumber]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isAgreement) {
-      setShowRegistrationPopup(true);
-    } else {
-      setAuthError({ title: 'Agreement Required', message: 'You have to agree to the terms of use and policies to continue.' });
-      setShowError(true);
-    }
-  };
-
-  const handleRegistrationConfirm = async () => {
-    const signupData = {
-      username: studentNumber,
-      name: firstName + ' ' + lastName,
-      email,
-      password,
-      faculty: selectedFaculty,
-      department: selectedDepartment,
-      course: selectedQualification,
-      joined: new Date().toString(),
-    }
-
-    try {
-      const result = await signup(signupData);
-      if (!result.success) {
-        setShowError(true);
-        return;
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setShowError(true);
-    } finally {
-      setShowRegistrationPopup(false);
-    }
-  };
-
-  const handleAgreementChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsAgreement(event.target.checked);
-  };
-
-  // Function to get qualifications for a department
-  const getQualificationsForDepartment = (department: string): { group: string, name: string }[] => {
-    return qualificationData[department] || [];
-  };
-
-  const facultyOptions = [
-    { value: '', label: 'Select Faculty' },
-    ...facultyData.map(faculty => ({ value: faculty, label: faculty }))
-  ];
-
-  const departmentOptions = [
-    { value: '', label: 'Select Department' },
-    ...(selectedFaculty && departmentData[selectedFaculty] 
-      ? departmentData[selectedFaculty].map(dept => ({ value: dept, label: dept }))
-      : [])
-  ];
-
-  const qualificationOptions = [
-    { value: '', label: 'Select Qualification' },
-    ...(selectedDepartment 
-      ? getQualificationsForDepartment(selectedDepartment).map(qual => ({ value: qual.group, label: `${qual.group}: ${qual.name}` }))
-      : [])
-  ];
+  const {
+    studentNumber,
+    password,
+    firstName,
+    lastName,
+    email,
+    selectedFaculty,
+    selectedDepartment,
+    selectedQualification,
+    showPassword,
+    isAgreement,
+    validationErrors,
+    isFormValid,
+    showError,
+    showRegistrationPopup,
+    handleSubmit,
+    handleRegistrationConfirm,
+    handleInputChange,
+    handleAgreementChange,
+    facultyOptions,
+    departmentOptions,
+    qualificationOptions,
+    setFirstName,
+    setLastName,
+    setShowPassword,
+    setSelectedFaculty,
+    setSelectedDepartment,
+    setSelectedQualification,
+    setShowRegistrationPopup,
+    isLoading,
+    authError
+  } = useSignupForm();
 
   return (
     <form onSubmit={handleSubmit}>
@@ -125,13 +73,21 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
 
       <Input
         label="Student Number"
-        type="text"
+        type="number"
         value={studentNumber}
-        onChange={(e) => setStudentNumber(e.target.value)}
+        name="studentNumber"
+        onChange={handleInputChange}
         placeholder=""
         icon={User}
         required
       />
+
+      {validationErrors.username && (
+        <div className="flex items-start pb-2">
+          <AlertTriangle className="w-4 h-4 text-red-400 mr-2" />
+          <p className="text-red-400 text-xs">{validationErrors.username}</p>
+        </div>
+      )}
 
       <Input
         label="Email"
@@ -145,13 +101,21 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
         label="Password"
         type={showPassword ? "text" : "password"}
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
+        onChange={handleInputChange}
         placeholder=""
         icon={Lock}
         rightIcon={showPassword ? EyeOff : Eye}
         onRightIconClick={() => setShowPassword(!showPassword)}
         required
       />
+
+      {validationErrors.password && (
+        <div className="flex items-start pb-2">
+          <AlertTriangle className="w-4 h-4 text-red-400 mr-2" />
+          <p className="text-red-400 text-xs">{validationErrors.password}</p>
+        </div>
+      )}
 
       <Select
         label="Faculty"
@@ -186,11 +150,12 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
         required
       />
 
-      <Button 
-        type="submit" 
-        fullWidth 
+      <Button
+        type="submit"
+        fullWidth
         isLoading={isLoading}
         icon={UserPlus}
+        disabled={!isAgreement || validationErrors.username !== '' || validationErrors.password !== '' || !isFormValid}
       >
         Create Account
       </Button>
@@ -219,13 +184,13 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onToggleForm }) => {
       </div>
 
       <AuthModal
-          title="Confirm Your Email"
-          message={`A verification email is being sent to ${email}. Please double check and confirm that it's correct.`}
-          isOpen={showRegistrationPopup}
-          onClose={() => setShowRegistrationPopup(false)}
-          onConfirm={handleRegistrationConfirm}
-          confirmButtonText="Confirm & Register"
-        />
+        title="Confirm Your Email"
+        message={`A verification email is being sent to ${email}. Please double check and confirm that it's correct.`}
+        isOpen={showRegistrationPopup}
+        onClose={() => setShowRegistrationPopup(false)}
+        onConfirm={handleRegistrationConfirm}
+        confirmButtonText="Confirm & Register"
+      />
     </form>
   );
 };

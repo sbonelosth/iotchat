@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ChatContextType, Message, FileAttachment } from '../types';
+import { ChatContextType, Message, FileAttachment } from '../types/index';
+import { useAuth } from './AuthContext';
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -11,6 +12,9 @@ const initialSuggestions = [
   { label: 'IoT career choices', question: 'What are some career choices in IoT?' },
   { label: 'Today\'s timetable', question: 'Show me today\'s lectures and venues.' },
   { label: 'My semester lecturers', question: 'Who are my lecturers this semester?' },
+  { label: 'Change of Carriculum', question: 'Where to go if I want to add or delete a module or change my qualification?' },
+  { label: 'Change of contact details', question: 'How do I change my contact details?' },
+  { label: 'Academic record', question: 'How can I get my academic record?' },
 ];
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
@@ -19,11 +23,25 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const [isResponseLoading, setIsResponseLoading] = useState(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     const [suggestions, setSuggestions] = useState(initialSuggestions);
+
+    const { user } = useAuth();
     
     // Load messages from localStorage on initial render
     useEffect(() => {
         try {
             const savedMessages = localStorage.getItem(STORAGE_KEY);
+            const savedSuggestions = localStorage.getItem('suggestions');
+
+            if (savedSuggestions) {
+                const parsedSuggestions = JSON.parse(savedSuggestions);
+                if (Array.isArray(parsedSuggestions)) {
+                    setSuggestions(parsedSuggestions);
+                } else {
+                    console.error('Invalid suggestion format in localStorage');
+                    localStorage.removeItem('suggestions');
+                }
+            }
+
             if (savedMessages) {
                 const parsedMessages = JSON.parse(savedMessages);
                 if (Array.isArray(parsedMessages) && parsedMessages.every(isValidMessage)) {
@@ -44,6 +62,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             const messagesJSON = JSON.stringify(messages);
             if (messagesJSON.length <= MAX_STORAGE_SIZE) {
                 localStorage.setItem(STORAGE_KEY, messagesJSON);
+                localStorage.setItem('suggestions', JSON.stringify(suggestions));
             } else {
                 // If exceeding size limit, remove oldest messages until it fits
                 const trimmedMessages = [...messages];
@@ -102,6 +121,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             const formData = new FormData();
             formData.append('question', `BICIOT LEVEL 3: ${text}`);
             formData.append('history', JSON.stringify(messages));
+            formData.append('course', user?.course || 'guest');
             formData.append('now', new Date().toDateString());
             
             if (attachment) {
