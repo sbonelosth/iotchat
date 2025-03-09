@@ -29,12 +29,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setViewportHeight(window.visualViewport?.height as number);
     };
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', handleResize);
+    window.visualViewport?.addEventListener('resize', handleResize);
+    window.visualViewport?.addEventListener('orientationchange', handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleResize);
+      window.visualViewport?.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('orientationchange', handleResize);
     };
   }, []);
 
