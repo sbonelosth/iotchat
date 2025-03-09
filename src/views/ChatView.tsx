@@ -2,6 +2,7 @@ import { AppBar } from '../components/AppBar';
 import { MessageList } from '../components/MessageList';
 import { InputArea } from '../components/InputArea';
 import { useChat } from '../contexts/ChatContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ChatView() {
     const { 
@@ -15,9 +16,11 @@ export default function ChatView() {
         handleRetry, 
         handleEditQuestion 
     } = useChat();
+
+    const { viewportHeight } = useAuth();
     
     return (
-        <div className="flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 min-h-screen">
+        <div style={{ height: `calc(${viewportHeight}px)` }} className="flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 min-h-screen">
             <AppBar onClearMessages={handleClearMessages} />
 
             <div className="flex-1 overflow-y-auto max-w-4xl w-full mx-auto">
