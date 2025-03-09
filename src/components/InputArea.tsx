@@ -71,14 +71,12 @@ export function InputArea({
     sendQuestion(question, null);
   };
 
-  const handleFocused = (e: React.FocusEvent) => {
-    e.preventDefault();
-    setViewportHeight(window.visualViewport?.height as number);
+  const handleFocused = () => {
+    setViewportHeight(window.visualViewport?.height as number || window.innerHeight);
   };
 
-  const handleBlur = (e: React.FocusEvent) => {
-    e.preventDefault();
-    setViewportHeight(window.visualViewport?.height as number);
+  const handleBlur = () => {
+    setViewportHeight(window.visualViewport?.height as number || window.innerHeight);
   };
 
   const removeAttachment: () => void = () => {
