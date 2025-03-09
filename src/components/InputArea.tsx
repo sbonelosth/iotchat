@@ -2,7 +2,6 @@ import React, { useState, useRef, ChangeEvent } from 'react';
 import { Paperclip, X, Sparkles, PlusIcon, ArrowUp } from 'lucide-react';
 import { FileAttachment } from '../types';
 import { useChat } from '../contexts/ChatContext';
-import { useAuth } from '../contexts/AuthContext';
 import { Suggestions } from './Suggestions';
 
 interface InputAreaProps {
@@ -27,7 +26,6 @@ export function InputArea({
   onInputChange,
 }: InputAreaProps) {
   const { sendQuestion } = useChat();
-  const { setViewportHeight } = useAuth();
   const [attachment, setAttachment] = useState<FileAttachment | null>(null);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -69,14 +67,6 @@ export function InputArea({
 
   const handleSuggestionClick = (question: string) => {
     sendQuestion(question, null);
-  };
-
-  const handleFocused = () => {
-    setViewportHeight(window.visualViewport?.height as number || window.innerHeight);
-  };
-
-  const handleBlur = () => {
-    setViewportHeight(window.visualViewport?.height as number || window.innerHeight);
   };
 
   const removeAttachment: () => void = () => {
@@ -136,8 +126,6 @@ export function InputArea({
               type="text"
               value={input}
               onChange={onInputChange}
-              onFocus={handleFocused}
-              onBlur={handleBlur}
               placeholder={editingMessageId ? "Edit your message" : "Message Campus AI"}
               className="flex-1 bg-blue-950 text-white placeholder-blue-400 rounded-r-xl px-4 py-3 mr-2 focus:outline-none focus:ring-0 focus:ring-blue-500"
             />

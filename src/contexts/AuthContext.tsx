@@ -15,7 +15,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for stored user data on initial load
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
@@ -24,7 +23,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('user');
       }
     }
+  }, []);
 
+  useEffect(() => {
     const handleResize = () => {
       if (!window.visualViewport?.height) {
         setViewportHeight(window.innerHeight);
@@ -40,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.visualViewport?.removeEventListener('resize', handleResize);
       window.visualViewport?.removeEventListener('orientationchange', handleResize);
     };
-  }, []);
+  }, [viewportHeight])
 
   useEffect(() => {
     if (isAuthenticated) {
