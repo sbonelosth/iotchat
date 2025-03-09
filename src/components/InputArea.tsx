@@ -73,12 +73,12 @@ export function InputArea({
 
   const handleFocused = (e: React.FocusEvent) => {
     e.preventDefault();
-    setViewportHeight(window.innerHeight);
+    setViewportHeight(window.visualViewport?.height as number);
   };
 
   const handleBlur = (e: React.FocusEvent) => {
     e.preventDefault();
-    setViewportHeight(window.innerHeight);
+    setViewportHeight(window.visualViewport?.height as number);
   };
 
   const removeAttachment: () => void = () => {

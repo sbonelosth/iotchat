@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const handleResize = () => {
-      setViewportHeight(window.innerHeight);
+      setViewportHeight(window.visualViewport?.height as number);
     };
 
     window.addEventListener('resize', handleResize);
